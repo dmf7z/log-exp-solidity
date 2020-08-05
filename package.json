@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "bignumber.js": "^9.0.0",
+    "bn": "^1.0.5",
+    "decimal.js": "^10.2.0",
+    "truffle": "^5.1.37"
+  }
+}
