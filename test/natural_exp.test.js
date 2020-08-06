@@ -7,13 +7,13 @@ BigNumber.config({ DECIMAL_PLACES: 18 });
 const MAX_EXPONENT = 135;
 
 contract("LogExpMath Natural Exponential", (accounts) => {
-  it("random 500 exps", async () => {
+  it("random 1000 exps", async () => {
     const instance = await LogExpMath.deployed();
 
-    for (let index = 0; index < 500; index++) {
+    for (let index = 0; index < 1000; index++) {
 
       //Create random exp
-      const randomWholeExp = Math.floor(
+      const randomWholeExp =  Math.floor(
         Math.random() * MAX_EXPONENT
       ).toString();
       const randomWholeDecimals = BigNumber.random();
@@ -25,7 +25,7 @@ contract("LogExpMath Natural Exponential", (accounts) => {
       );
 
       //Calculate result with Decimal library
-      const result2 = Decimal("2.718281828459045235")
+      const result2 = Decimal("2.7182818284590452353602874713526624977572470936999595")
         .pow(randomExp.toString())
         .toString();
 
@@ -39,11 +39,11 @@ contract("LogExpMath Natural Exponential", (accounts) => {
         .absoluteValue()
         .toNumber();
 
-      //Check relative error is less or equal to 2.4 × 10^-18
+      //Check relative error is less or equal to 9e-18
       assert.isAtMost(
         relativeError,
-        1.7e-17,
-        `Relative error is not less or equal than 2.4 × 10^-18 for ${randomExp.toString()} exp.`
+        9e-18,
+        `Relative error is not less or equal than 9e-18 for ${randomExp.toString()} exp.`
       );
     }
   });
