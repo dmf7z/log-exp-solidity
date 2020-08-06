@@ -105,11 +105,11 @@ library LogExpMath {
         require( a > 0, "Positive argument required");
         if (a < PRECISION) return (-log(PRECISION * PRECISION / a));
         int256 ans = 0;
-        if(a >= a0) {
+        if(a >= a0 * PRECISION) {
             ans += x0;
             a /= a0;
         }
-        if(a >= a1) {
+        if(a >= a1 * PRECISION) {
             ans += x1;
             a /= a1;
         }
@@ -153,26 +153,31 @@ library LogExpMath {
             ans += x11;
             a = a * PRECISION / a11;
         }
-        a -= PRECISION;
-        int256 s = a;
-        int256 t = a * a / PRECISION;
-        s -= t / 2;
-        t = t * a / PRECISION;
+        int256 z = PRECISION * (a - PRECISION) / (a + PRECISION);
+        int256 s = z;
+        int256 z_squared = z * z / PRECISION;
+        int256 t = z * z_squared / PRECISION;
         s += t / 3;
-        t = t * a / PRECISION;
-        s -= t / 4;
-        t = t * a / PRECISION;
+        t = t * z_squared / PRECISION;
         s += t / 5;
-        t = t * a / PRECISION;
-        s -= t / 6;
-        t = t * a / PRECISION;
+        t = t * z_squared / PRECISION;
         s += t / 7;
-        t = t * a / PRECISION;
-        s -= t / 8;
-        t = t * a / PRECISION;
+        t = t * z_squared / PRECISION;
         s += t / 9;
-        t = t * a / PRECISION;
-        s -= t / 10;
-        return ans + s;
+        t = t * z_squared / PRECISION;
+        s += t / 11;
+        t = t * z_squared / PRECISION;
+        s += t / 13;
+        t = t * z_squared / PRECISION;
+        s += t / 15;
+        t = t * z_squared / PRECISION;
+        s += t / 17;
+        t = t * z_squared / PRECISION;
+        s += t / 19;
+        t = t * z_squared / PRECISION;
+        s += t / 21;
+        t = t * z_squared / PRECISION;
+        s += t / 23;
+        return ans + 2 * s;
     }
 }
