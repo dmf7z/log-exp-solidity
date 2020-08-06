@@ -29,6 +29,8 @@ library LogExpMath {
     int256 constant a11 = 1064494458917859429;
 
     function exp(int256 x) public pure returns (int256) {
+        require( x < 135 * PRECISION, "Exponent must be less than 135");
+        if (x < 0) return (PRECISION * PRECISION / exp(-x));
         int256 ans = PRECISION;
         int256 last = 1;
         if(x >= x0) {
@@ -100,6 +102,8 @@ library LogExpMath {
     }
 
     function log(int256 a) public pure returns (int256) {
+        require( a > 0, "Positive argument required");
+        if (a < PRECISION) return (-log(PRECISION * PRECISION / a));
         int256 ans = 0;
         if(a >= a0) {
             ans += x0;
