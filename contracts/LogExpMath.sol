@@ -24,6 +24,10 @@ library LogExpMath {
     int256 constant a8 = 1648721270700128146;
     int256 constant x9 = 250000000000000000;
     int256 constant a9 = 1284025416687741484;
+    int256 constant x10 = 125000000000000000;
+    int256 constant a10 = 1133148453066826316;
+    int256 constant x11 = 62500000000000000;
+    int256 constant a11 = 1064494458917859429;
 
     function exp(int256 x) public pure returns (int256) {
         int256 ans = PRECISION;
@@ -95,4 +99,78 @@ library LogExpMath {
         s += t;
         return ( (ans * s / PRECISION) * last);
     }
+
+    function log(int256 a) public pure returns (int256) {
+        int256 ans = 0;
+        if(a >= a0) {
+            ans += x0;
+            a /= a0;
+        }
+        if(a >= a1) {
+            ans += x1;
+            a /= a1;
+        }
+        if(a >= a2) {
+            ans += x2;
+            a = a * PRECISION / a2 ;
+        }
+        if(a >= a3) {
+            ans += x3;
+            a = a * PRECISION / a3 ;
+        }
+        if(a >= a4) {
+            ans += x4;
+            a = a * PRECISION / a4 ;
+        }
+        if(a >= a5) {
+            ans += x5;
+            a = a * PRECISION / a5 ;
+        }
+        if(a >= a6) {
+            ans += x6;
+            a = a * PRECISION / a6 ;
+        }
+        if(a >= a7) {
+            ans += x7;
+            a = a * PRECISION / a7 ;
+        }
+        if(a >= a8) {
+            ans += x8;
+            a = a * PRECISION / a8 ;
+        }
+        if(a >= a9) {
+            ans += x9;
+            a = a * PRECISION / a9 ;
+        }
+        if(a >= a10) {
+            ans += x10;
+            a = a * PRECISION / a10 ;
+        }
+        if(a >= a11) {
+            ans += x11;
+            a = a * PRECISION / a11;
+        }
+        a -= PRECISION;
+        int256 s = a;
+        int256 t = a * a / PRECISION;
+        s -= t / 2;
+        t = t * a / PRECISION;
+        s += t / 3;
+        t = t * a / PRECISION;
+        s -= t / 4;
+        t = t * a / PRECISION;
+        s += t / 5;
+        t = t * a / PRECISION;
+        s -= t / 6;
+        t = t * a / PRECISION;
+        s += t / 7;
+        t = t * a / PRECISION;
+        s -= t / 8;
+        t = t * a / PRECISION;
+        s += t / 9;
+        t = t * a / PRECISION;
+        s -= t / 10;
+        return ans + s;
+    }
 }
+000000000000000000
