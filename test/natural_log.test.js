@@ -4,7 +4,7 @@ Decimal.set({ precision: 72 });
 const BigNumber = require("bignumber.js");
 BigNumber.config({ DECIMAL_PLACES: 18 });
 
-//2^256 / 10^36 
+//2^256 / 10^36
 const MAX_WHOLE = new BigNumber(115792089237316195423570985008687907853269);
 
 contract("LogExpMath Natural Logarithm", (accounts) => {
@@ -19,7 +19,7 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
 
       //Execute natural exp function
       const result1 = await instance.log.call(
-        randomNum.toFixed(18).replace(".", "")
+        randomNum.toFixed(18, 1).replace(".", "")
       );
 
       //Calculate result with Decimal library
@@ -30,7 +30,7 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
         .minus(
           new BigNumber(result1.toString())
             .div("1000000000000000000")
-            .div(result2.toFixed(18))
+            .div(result2.toFixed(18, 1))
         )
         .absoluteValue()
         .toNumber();
@@ -52,7 +52,7 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
 
       //Execute natural exp function
       const result1 = await instance.log.call(
-        randomNum.toFixed(18).replace(".", "")
+        randomNum.toFixed(18, 1).replace(".", "")
       );
 
       //Calculate result with Decimal library
@@ -63,7 +63,7 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
         .minus(
           new BigNumber(result1.toString())
             .div("1000000000000000000")
-            .div(result2.toFixed(18))
+            .div(result2.toFixed(18, 1))
         )
         .absoluteValue()
         .toNumber();

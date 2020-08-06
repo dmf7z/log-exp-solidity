@@ -11,9 +11,8 @@ contract("LogExpMath Natural Exponential", (accounts) => {
     const instance = await LogExpMath.deployed();
 
     for (let index = 0; index < 100; index++) {
-
       //Create random exp
-      const randomWholeExp =  Math.floor(
+      const randomWholeExp = Math.floor(
         Math.random() * MAX_EXPONENT
       ).toString();
       const randomDecimalsExp = BigNumber.random();
@@ -21,11 +20,13 @@ contract("LogExpMath Natural Exponential", (accounts) => {
 
       //Execute natural exp function
       const result1 = await instance.exp.call(
-        randomExp.toFixed(18).replace(".", "")
+        randomExp.toFixed(18, 1).replace(".", "")
       );
 
       //Calculate result with Decimal library
-      const result2 = Decimal("2.7182818284590452353602874713526624977572470936999595")
+      const result2 = Decimal(
+        "2.7182818284590452353602874713526624977572470936999595"
+      )
         .pow(randomExp.toString())
         .toString();
 
