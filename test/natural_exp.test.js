@@ -7,17 +7,17 @@ BigNumber.config({ DECIMAL_PLACES: 18 });
 const MAX_EXPONENT = 135;
 
 contract("LogExpMath Natural Exponential", (accounts) => {
-  it("random 1000 exps", async () => {
+  it("100 random numbers between 0 and 135", async () => {
     const instance = await LogExpMath.deployed();
 
-    for (let index = 0; index < 1000; index++) {
+    for (let index = 0; index < 100; index++) {
 
       //Create random exp
       const randomWholeExp =  Math.floor(
         Math.random() * MAX_EXPONENT
       ).toString();
-      const randomWholeDecimals = BigNumber.random();
-      const randomExp = randomWholeDecimals.plus(randomWholeExp);
+      const randomDecimalsExp = BigNumber.random();
+      const randomExp = randomDecimalsExp.plus(randomWholeExp);
 
       //Execute natural exp function
       const result1 = await instance.exp.call(
