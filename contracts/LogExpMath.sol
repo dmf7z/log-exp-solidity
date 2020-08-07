@@ -3,6 +3,8 @@ pragma solidity ^0.5.7;
 library LogExpMath {
     
     int256 constant PRECISION = 10**18; 
+    int256 constant up_thres = 1105170918075647624;
+    int256 constant down_thres = 904837418035959573;
     int256 constant x0 = 128000000000000000000;
     int256 constant a0 = 38877084059945950920000000000000000000000000000000000000;
     int256 constant x1 = 64000000000000000000;
@@ -101,9 +103,49 @@ library LogExpMath {
         return ( (ans * s / PRECISION) * last);
     }
 
+    function log_small_num(int256 a) public pure returns (int256) { // public?
+        int256 EXT_PRECISION = 10 ** 20;
+        a *= 100;
+        int256 z = EXT_PRECISION * (a - EXT_PRECISION) / (a + EXT_PRECISION);
+        int256 s = z;
+        int256 z_squared = z * z / EXT_PRECISION;
+        int256 t = z * z_squared / EXT_PRECISION;
+        s += t / 3;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 5;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 7;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 9;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 11;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 13;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 15;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 17;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 19;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 21;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 23;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 25;
+        t = t * z_squared / EXT_PRECISION;
+        s += t / 27;
+        return ((2 * s) / 100);
+    }
+
     function log(int256 a) public pure returns (int256) {
         require( a > 0, "Positive argument required");
-        if (a < PRECISION) return (-log(PRECISION * PRECISION / a));
+        if (a < up_thres) {
+            if (a < down_thres) 
+                {return ( -log(PRECISION * PRECISION / a) );}
+            else
+                {return log_small_num(a);}
+        } 
         int256 ans = 0;
         if(a >= a0 * PRECISION) {
             ans += x0;
