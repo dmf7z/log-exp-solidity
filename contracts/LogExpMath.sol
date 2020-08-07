@@ -129,12 +129,6 @@ library LogExpMath {
         s += t / 19;
         t = t * z_squared / EXT_PRECISION;
         s += t / 21;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 23;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 25;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 27;
         return ((2 * s) / 100);
     }
 
@@ -214,12 +208,6 @@ library LogExpMath {
         s += t / 15;
         t = t * z_squared / PRECISION;
         s += t / 17;
-        t = t * z_squared / PRECISION;
-        s += t / 19;
-        t = t * z_squared / PRECISION;
-        s += t / 21;
-        t = t * z_squared / PRECISION;
-        s += t / 23;
         return ans + 2 * s;
     }
 }
