@@ -1,213 +1,184 @@
 pragma solidity ^0.5.7;
 
 library LogExpMath {
-    
-    int256 constant PRECISION = 10**18; 
-    int256 constant up_thres = 1105170918075647624;
-    int256 constant down_thres = 904837418035959573;
-    int256 constant x0 = 128000000000000000000;
-    int256 constant a0 = 38877084059945950920000000000000000000000000000000000000;
-    int256 constant x1 = 64000000000000000000;
-    int256 constant a1 = 6235149080811616883000000000;
-    int256 constant x2 = 32000000000000000000;
-    int256 constant a2 = 78962960182680695160000000000000;
-    int256 constant x3 = 16000000000000000000;
-    int256 constant a3 = 8886110520507872637000000;
-    int256 constant x4 = 8000000000000000000;
-    int256 constant a4 = 2980957987041728275000;
-    int256 constant x5 = 4000000000000000000;
-    int256 constant a5 = 54598150033144239080;
-    int256 constant x6 = 2000000000000000000;
-    int256 constant a6 = 7389056098930650227;
-    int256 constant x7 = 1000000000000000000;
-    int256 constant a7 = 2718281828459045235;
-    int256 constant x8 = 500000000000000000;
-    int256 constant a8 = 1648721270700128146;
-    int256 constant x9 = 250000000000000000;
-    int256 constant a9 = 1284025416687741484;
-    int256 constant x10 = 125000000000000000;
-    int256 constant a10 = 1133148453066826316;
-    int256 constant x11 = 62500000000000000;
-    int256 constant a11 = 1064494458917859429;
+    int256 constant MAX_DECIMALS_DOUBLE = 10**36;
+    int256 constant PRECISION = 10**20;
 
-    function exp(int256 x) public pure returns (int256) {
-        require( x < 135 * PRECISION, "Exponent must be less than 135");
-        if (x < 0) return (PRECISION * PRECISION / exp(-x));
+    int256 constant x0 = 12800000000000000000000;
+    int256 constant a0 = 38877084059945950922200000000000000000000000000000000000;
+    int256 constant x1 = 6400000000000000000000;
+    int256 constant a1 = 6235149080811616882910000000;
+    int256 constant x2 = 3200000000000000000000;
+    int256 constant a2 = 7896296018268069516100000000000000;
+    int256 constant x3 = 1600000000000000000000;
+    int256 constant a3 = 888611052050787263676000000;
+    int256 constant x4 = 800000000000000000000;
+    int256 constant a4 = 298095798704172827474000;
+    int256 constant x5 = 400000000000000000000;
+    int256 constant a5 = 5459815003314423907810;
+    int256 constant x6 = 200000000000000000000;
+    int256 constant a6 = 738905609893065022723;
+    int256 constant x7 = 100000000000000000000;
+    int256 constant a7 = 271828182845904523536;
+    int256 constant x8 = 50000000000000000000;
+    int256 constant a8 = 164872127070012814685;
+    int256 constant x9 = 25000000000000000000;
+    int256 constant a9 = 128402541668774148407;
+    int256 constant x10 = 12500000000000000000;
+    int256 constant a10 = 113314845306682631683;
+    int256 constant x11 = 6250000000000000000;
+    int256 constant a11 = 106449445891785942956;
+
+    function n_exp(int256 x) public pure returns (int256) {
+        require(
+            x >= -41446531673892822312 && x <= 130700829182905140221,
+            "Natural exp argument must be less between -130.700829182905140221 and 130.700829182905140221"
+        );
+        if (x < 0) return (MAX_DECIMALS_DOUBLE / n_exp(-x));
+        x *= 100;
         int256 ans = PRECISION;
         int256 last = 1;
-        if(x >= x0) {
+        if (x >= x0) {
             last = a0;
             x -= x0;
         }
-        if(x >= x1) {
-            last *=  a1;
-            x -=  x1;
+        if (x >= x1) {
+            last *= a1;
+            x -= x1;
         }
-        if(x >= x2) {
-            ans = ans * a2 / PRECISION;
-            x -=  x2;
+        if (x >= x2) {
+            ans = (ans * a2) / PRECISION;
+            x -= x2;
         }
-        if(x >= x3) {
-            ans = ans * a3 / PRECISION;
-            x -=  x3;
+        if (x >= x3) {
+            ans = (ans * a3) / PRECISION;
+            x -= x3;
         }
-        if(x >= x4) {
-            ans = ans * a4 / PRECISION;
-            x -=  x4;
+        if (x >= x4) {
+            ans = (ans * a4) / PRECISION;
+            x -= x4;
         }
-        if(x >= x5) {
-            ans = ans * a5 / PRECISION;
-            x -=  x5;
+        if (x >= x5) {
+            ans = (ans * a5) / PRECISION;
+            x -= x5;
         }
-        if(x >= x6) {
-            ans = ans * a6 / PRECISION;
-            x -=  x6;
+        if (x >= x6) {
+            ans = (ans * a6) / PRECISION;
+            x -= x6;
         }
-        if(x >= x7) {
-            ans = ans * a7 / PRECISION;
-            x -=  x7;
+        if (x >= x7) {
+            ans = (ans * a7) / PRECISION;
+            x -= x7;
         }
-        if(x >= x8) {
-            ans = ans * a8 / PRECISION;
-            x -=  x8;
+        if (x >= x8) {
+            ans = (ans * a8) / PRECISION;
+            x -= x8;
         }
-        if(x >= x9) {
-            ans = ans * a9 / PRECISION;
-            x -=  x9;
+        if (x >= x9) {
+            ans = (ans * a9) / PRECISION;
+            x -= x9;
         }
         int256 s = PRECISION;
         int256 t = x;
         s += t;
-        t = (t * x / 2) / PRECISION;
+        t = ((t * x) / 2) / PRECISION;
         s += t;
-        t = (t * x / 3) / PRECISION;
+        t = ((t * x) / 3) / PRECISION;
         s += t;
-        t = (t * x / 4) / PRECISION;
+        t = ((t * x) / 4) / PRECISION;
         s += t;
-        t = (t * x / 5) / PRECISION;
+        t = ((t * x) / 5) / PRECISION;
         s += t;
-        t = (t * x / 6) / PRECISION;
+        t = ((t * x) / 6) / PRECISION;
         s += t;
-        t = (t * x / 7) / PRECISION;
+        t = ((t * x) / 7) / PRECISION;
         s += t;
-        t = (t * x / 8) / PRECISION;
+        t = ((t * x) / 8) / PRECISION;
         s += t;
-        t = (t * x / 9) / PRECISION;
+        t = ((t * x) / 9) / PRECISION;
         s += t;
-        t = (t * x / 10) / PRECISION;
+        t = ((t * x) / 10) / PRECISION;
         s += t;
-        t = (t * x / 11) / PRECISION;
+        t = ((t * x) / 11) / PRECISION;
         s += t;
-        t = (t * x / 12) / PRECISION;
+        t = ((t * x) / 12) / PRECISION;
         s += t;
-        return ( (ans * s / PRECISION) * last);
+        return (((ans * s) / PRECISION) * last) / 100;
     }
 
-    function log_small_num(int256 a) public pure returns (int256) { // public?
-        int256 EXT_PRECISION = 10 ** 20;
+    function n_log(int256 a) public pure returns (int256) {
+        require(
+            a > 0 && a <= 578960446186580977117854925043439539266349923328202820000,
+            "Natural log argument must be less between 0 and 578960446186580977117854925043439539266.349923328202820000"
+        );
         a *= 100;
-        int256 z = EXT_PRECISION * (a - EXT_PRECISION) / (a + EXT_PRECISION);
-        int256 s = z;
-        int256 z_squared = z * z / EXT_PRECISION;
-        int256 t = z * z_squared / EXT_PRECISION;
-        s += t / 3;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 5;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 7;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 9;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 11;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 13;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 15;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 17;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 19;
-        t = t * z_squared / EXT_PRECISION;
-        s += t / 21;
-        return ((2 * s) / 100);
-    }
-
-    function log(int256 a) public pure returns (int256) {
-        require( a > 0, "Positive argument required");
-        if (a < up_thres) {
-            if (a < down_thres) 
-                {return ( -log(PRECISION * PRECISION / a) );}
-            else
-                {return log_small_num(a);}
-        } 
+        if (a < PRECISION) return (-n_log((PRECISION * PRECISION) / (100 * a)));
         int256 ans = 0;
-        if(a >= a0 * PRECISION) {
+        if (a >= a0 * PRECISION) {
             ans += x0;
             a /= a0;
         }
-        if(a >= a1 * PRECISION) {
+        if (a >= a1 * PRECISION) {
             ans += x1;
             a /= a1;
         }
-        if(a >= a2) {
+        if (a >= a2) {
             ans += x2;
-            a = a * PRECISION / a2 ;
+            a = (a * PRECISION) / a2;
         }
-        if(a >= a3) {
+        if (a >= a3) {
             ans += x3;
-            a = a * PRECISION / a3 ;
+            a = (a * PRECISION) / a3;
         }
-        if(a >= a4) {
+        if (a >= a4) {
             ans += x4;
-            a = a * PRECISION / a4 ;
+            a = (a * PRECISION) / a4;
         }
-        if(a >= a5) {
+        if (a >= a5) {
             ans += x5;
-            a = a * PRECISION / a5 ;
+            a = (a * PRECISION) / a5;
         }
-        if(a >= a6) {
+        if (a >= a6) {
             ans += x6;
-            a = a * PRECISION / a6 ;
+            a = (a * PRECISION) / a6;
         }
-        if(a >= a7) {
+        if (a >= a7) {
             ans += x7;
-            a = a * PRECISION / a7 ;
+            a = (a * PRECISION) / a7;
         }
-        if(a >= a8) {
+        if (a >= a8) {
             ans += x8;
-            a = a * PRECISION / a8 ;
+            a = (a * PRECISION) / a8;
         }
-        if(a >= a9) {
+        if (a >= a9) {
             ans += x9;
-            a = a * PRECISION / a9 ;
+            a = (a * PRECISION) / a9;
         }
-        if(a >= a10) {
+        if (a >= a10) {
             ans += x10;
-            a = a * PRECISION / a10 ;
+            a = (a * PRECISION) / a10;
         }
-        if(a >= a11) {
+        if (a >= a11) {
             ans += x11;
-            a = a * PRECISION / a11;
+            a = (a * PRECISION) / a11;
         }
-        int256 z = PRECISION * (a - PRECISION) / (a + PRECISION);
+        int256 z = (PRECISION * (a - PRECISION)) / (a + PRECISION);
         int256 s = z;
-        int256 z_squared = z * z / PRECISION;
-        int256 t = z * z_squared / PRECISION;
+        int256 z_squared = (z * z) / PRECISION;
+        int256 t = (z * z_squared) / PRECISION;
         s += t / 3;
-        t = t * z_squared / PRECISION;
+        t = (t * z_squared) / PRECISION;
         s += t / 5;
-        t = t * z_squared / PRECISION;
+        t = (t * z_squared) / PRECISION;
         s += t / 7;
-        t = t * z_squared / PRECISION;
+        t = (t * z_squared) / PRECISION;
         s += t / 9;
-        t = t * z_squared / PRECISION;
+        t = (t * z_squared) / PRECISION;
         s += t / 11;
-        t = t * z_squared / PRECISION;
+        t = (t * z_squared) / PRECISION;
         s += t / 13;
-        t = t * z_squared / PRECISION;
+        t = (t * z_squared) / PRECISION;
         s += t / 15;
-        t = t * z_squared / PRECISION;
-        s += t / 17;
-        return ans + 2 * s;
+        return (ans + 2 * s) / 100;
     }
 }
