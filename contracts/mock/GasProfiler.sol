@@ -1,6 +1,7 @@
 pragma solidity ^0.5.7;
 
 contract GasProfiler {
+    int256 constant TEN_POWER17 = 10**17;
     int256 constant MAX_DECIMALS = 10**18;
     int256 constant MAX_DECIMALS_DOUBLE = 10**36;
     int256 constant PRECISION = 10**20;
@@ -185,10 +186,64 @@ contract GasProfiler {
     }
 
     function power(int256 x, int256 y) public returns (int256) {
-        return n_exp((n_log(x) * y) / MAX_DECIMALS);
+        require( 0 <= x, "x must be positive");
+        int256 logx_times_y;
+        if (MAX_DECIMALS - TEN_POWER17 < x && x < MAX_DECIMALS + TEN_POWER17) {
+            int256 logbase = n_log_36(x);
+            logx_times_y = ( (logbase / MAX_DECIMALS) * y + (logbase % MAX_DECIMALS) * y / MAX_DECIMALS ) / MAX_DECIMALS;
+        } else {
+            logx_times_y = n_log(x) * y / MAX_DECIMALS;
+        }
+        require(
+            logx_times_y >= -41446531673892822312 && logx_times_y <= 130700829182905140221,
+            "log(x) times y must be between -41.446531673892822312 and 130.700829182905140221"
+        );
+        int256 result = n_exp( logx_times_y );  
+        emit showResult(result);
+        return result;
     }
 
     function log(int256 base, int256 arg) public returns (int256) {
-        return (n_log(arg) * MAX_DECIMALS) / n_log(base);
+        int256 logbase;
+        if (MAX_DECIMALS - TEN_POWER17 < base && base < MAX_DECIMALS + TEN_POWER17) {
+            logbase = n_log_36(base);
+        } else {
+            logbase = n_log(base) * MAX_DECIMALS;
+        }
+        int256 logarg;
+        if (MAX_DECIMALS - TEN_POWER17 < arg && arg < MAX_DECIMALS + TEN_POWER17) {
+            logarg = n_log_36(arg);
+        } else {
+            logarg = n_log(arg) * MAX_DECIMALS;
+        }
+        int256 result = (logarg * MAX_DECIMALS) / logbase;
+        emit showResult( result );
+        return result;
     }
+
+    function n_log_36(int256 a) private pure returns (int256) {
+            a *= MAX_DECIMALS;
+            int256 z = (MAX_DECIMALS_DOUBLE * (a - MAX_DECIMALS_DOUBLE)) / (a + MAX_DECIMALS_DOUBLE);
+            int256 s = z;
+            int256 z_squared = (z * z) / MAX_DECIMALS_DOUBLE;
+            int256 t = (z * z_squared) / MAX_DECIMALS_DOUBLE;
+            s += t / 3;
+            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
+            s += t / 5;
+            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
+            s += t / 7;
+            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
+            s += t / 9;
+            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
+            s += t / 11;
+            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
+            s += t / 13;
+            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
+            s += t / 15;
+            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
+            s += t / 17;
+            return 2*s;
+    }
+    
+    event showResult(int256 result);
 }
