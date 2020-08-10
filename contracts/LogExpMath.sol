@@ -1,6 +1,7 @@
 pragma solidity ^0.5.7;
 
 library LogExpMath {
+    int256 constant MAX_DECIMALS = 10**18;
     int256 constant MAX_DECIMALS_DOUBLE = 10**36;
     int256 constant PRECISION = 10**20;
 
@@ -32,7 +33,7 @@ library LogExpMath {
     function n_exp(int256 x) public pure returns (int256) {
         require(
             x >= -41446531673892822312 && x <= 130700829182905140221,
-            "Natural exp argument must be less between -41.446531673892822312 and 130.700829182905140221"
+            "Natural exp argument must be between -41.446531673892822312 and 130.700829182905140221"
         );
         if (x < 0) return (MAX_DECIMALS_DOUBLE / n_exp(-x));
         x *= 100;
@@ -109,7 +110,7 @@ library LogExpMath {
     function n_log(int256 a) public pure returns (int256) {
         require(
             a > 0 && a <= 578960446186580977117854925043439539266349923328202820000,
-            "Natural log argument must be less between 0 and 578960446186580977117854925043439539266.349923328202820000"
+            "Natural log argument must be between 0 and 578960446186580977117854925043439539266.349923328202820000"
         );
         a *= 100;
         if (a < PRECISION) return (-n_log((PRECISION * PRECISION) / (100 * a)));
@@ -180,5 +181,13 @@ library LogExpMath {
         t = (t * z_squared) / PRECISION;
         s += t / 15;
         return (ans + 2 * s) / 100;
+    }
+
+    function power(int256 x, int256 y) public pure returns (int256) {
+        return n_exp( (n_log(x) * y) / MAX_DECIMALS );
+    }
+
+    function log(int256 base, int256 arg) public pure returns (int256) {
+        return (n_log(arg) * MAX_DECIMALS) / n_log(base);
     }
 }
