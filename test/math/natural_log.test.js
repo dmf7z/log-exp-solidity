@@ -25,7 +25,7 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
       //Get function result
       const result = await calculate(randomArg);
       //Check error
-      helper.checkError("exp", randomArg, result.solution, result.exact, 1);
+      helper.checkError("log", randomArg, result.solution, result.exact, 1);
     }
   });
   it("hould calculate random numbers between 0 an 1 correctly", async () => {
@@ -35,7 +35,7 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
       //Get function result
       const result = await calculate(randomArg);
       //Check error
-      helper.checkError("exp", randomArg, result.solution, result.exact, 300);
+      helper.checkError("log", randomArg, result.solution, result.exact, 300);
     }
   });
   it("should fail for an argument greater than 578960446186580977117854925043439539266.349923328202820000", async () => {
@@ -77,12 +77,12 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
     );
     const result = await calculate(maxArg);
     //Check error
-    helper.checkError("exp", maxArg, result.solution, result.exact, 1);
+    helper.checkError("log", maxArg, result.solution, result.exact, 1);
   });
   it("should calculate min argument 0.000000000000000001 correctly", async () => {
     const minArg = new helper.BigNumber("0.000000000000000001");
     const result = await calculate(minArg);
     //Check error
-    helper.checkError("exp", minArg, result.solution, result.exact, 1);
+    helper.checkError("log", minArg, result.solution, result.exact, 1);
   });
 });
