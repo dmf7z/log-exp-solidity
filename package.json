@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "profile": "npm run clean && MODE=profile truffle test ./test/gas/*; istanbul report html",
+    "profile": "npm run clean && truffle test ./test/gas/*; istanbul report html",
     "clean": "shx rm -rf coverage",
     "test": "truffle test ./test/math/*",
     "compile": "truffle compile",

@@ -1,4 +1,4 @@
-var Decimal = require("decimal.js");
+const Decimal = require("decimal.js");
 Decimal.set({ precision: 36 });
 const BigNumber = require("bignumber.js");
 BigNumber.config({ DECIMAL_PLACES: 18 });
