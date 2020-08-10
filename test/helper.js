@@ -1,5 +1,5 @@
 const Decimal = require("decimal.js");
-Decimal.set({ precision: 36 });
+Decimal.set({ precision: 72 });
 const BigNumber = require("bignumber.js");
 BigNumber.config({ DECIMAL_PLACES: 18 });
 
@@ -13,11 +13,13 @@ const getFirst18DigitsDifference = (solution, exact) => {
     .replace("-", "")
     .substring(0, 18);
   const exactTruncated = exact
+    .toFixed(71, 1)
     .toString()
     .replace("-", "")
     .replace(".", "")
     .replace(/^0+/, "")
     .substring(0, solutionTruncated.length);
+
   return new BigNumber(solutionTruncated)
     .minus(exactTruncated)
     .absoluteValue()
