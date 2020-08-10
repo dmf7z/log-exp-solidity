@@ -1,9 +1,5 @@
 const GasProfiler = artifacts.require("GasProfiler");
-const helper = require("../helper");
-
-const to18Decimals = (num) => {
-  return new helper.Decimal(num).toFixed(18, 1).replace(".", "");
-};
+const { to18Decimals } = require("../helper");
 
 contract("LogExpMath Gas Profiling", () => {
   after("write coverage/profiler output", async () => {});
