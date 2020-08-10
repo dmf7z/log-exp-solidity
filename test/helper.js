@@ -1,29 +1,61 @@
 var Decimal = require("decimal.js");
-Decimal.set({ precision: 72 });
+Decimal.set({ precision: 36 });
 const BigNumber = require("bignumber.js");
 BigNumber.config({ DECIMAL_PLACES: 18 });
 
+const isNegative = (num) => {
+  return num.toString().charAt(0) == "-";
+};
+
+const getFirst18DigitsDifference = (solution, exact) => {
+  const solutionTruncated = solution
+    .toString()
+    .replace("-", "")
+    .substring(0, 18);
+  const exactTruncated = exact
+    .toString()
+    .replace("-", "")
+    .replace(".", "")
+    .replace(/^0+/, "")
+    .substring(0, solutionTruncated.length);
+  return new BigNumber(solutionTruncated)
+    .minus(exactTruncated)
+    .absoluteValue()
+    .toNumber();
+};
+
 module.exports = {
   TOTAL_TEST_LOOP: 100,
-  MAX_EXPONENT: 130,
-  MIN_EXPONENT: -41,
-  MAX_EXPONENT_LOGEXP: 88, //Max: 89.254297509012317908710
-  MAX_WHOLE_LOG: new BigNumber(578960446186580977117854925043439539266), //MAX: (2^255 -1) / (10^20 * 10^18)
   E: "2.7182818284590452353602874713526624977572470936999595",
-  PRECISION: "1000000000000000000", //10^18
   Decimal: Decimal,
   BigNumber: BigNumber,
-  createRandomExponent: (max, min = 0) => {
-    const randomWholeExp = Math.floor(Math.random() * max).toString();
-    const randomDecimalsExp = BigNumber.random();
-    return randomDecimalsExp.plus(randomWholeExp).plus(min);
+  createRandomNum: (max, min = 0) => {
+    const randomWhole = (
+      Math.floor(Math.random() * (max - min + 1)) + min
+    ).toString();
+    const randomDecimal = BigNumber.random();
+    return randomDecimal.plus(randomWhole);
   },
   createRandomNumGreaterThanOne: (max) => {
-    const randomWholeNum = max
+    const randomWhole = max
       .minus(1)
       .div(new BigNumber(10).pow(Math.floor(Math.random() * 36) + 1))
       .times(Decimal.random());
-    const randomDecimalsNum = BigNumber.random();
-    return randomDecimalsNum.plus(randomWholeNum);
+    const randomDecimals = BigNumber.random();
+    return randomDecimals.plus(randomWhole);
+  },
+  checkError: (func, argument, solution, exact, max) => {
+    const message = `Function ${func} for ${argument} reports ${solution.toString()} and exact solution ${exact.toFixed(
+      18,
+      1
+    )}`;
+    expect(isNegative(solution)).to.equal(
+      isNegative(exact),
+      `${message} has a different sign.`
+    );
+    expect(
+      getFirst18DigitsDifference(solution, exact),
+      `${message} has a bigger difference than |${max}| in the digit 18.`
+    ).to.be.within(0, max);
   },
 };

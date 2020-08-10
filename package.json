@@ -1,8 +1,18 @@
 {
+  "scripts": {
+    "profile": "npm run clean && MODE=profile truffle test ./test/gas/*; istanbul report html",
+    "clean": "shx rm -rf coverage",
+    "test": "truffle test ./test/math/*",
+    "compile": "truffle compile",
+    "migrate": "truffle migrate"
+  },
   "dependencies": {
+    "@0x/sol-profiler": "^4.1.0",
+    "@0x/sol-trace": "^3.0.10",
     "bignumber.js": "^9.0.0",
-    "bn": "^1.0.5",
     "decimal.js": "^10.2.0",
+    "istanbul": "^0.4.5",
+    "shx": "^0.3.2",
     "truffle": "^5.1.37"
   }
 }
