@@ -1,10 +1,13 @@
 pragma solidity ^0.5.7;
 
 contract GasProfiler {
-    int256 constant TEN_POWER17 = 10**17;
-    int256 constant MAX_DECIMALS = 10**18;
-    int256 constant MAX_DECIMALS_DOUBLE = 10**36;
+
+    int256 constant DECIMALS = 10**18;
+    int256 constant DOUBLE_DECIMALS = DECIMALS * DECIMALS;
     int256 constant PRECISION = 10**20;
+    int256 constant DOUBLE_PRECISION = PRECISION * PRECISION;
+    int256 constant PRECISION_LOG_UNDER_BOUND = DECIMALS - 10**17;
+    int256 constant PRECISION_LOG_UPPER_BOUND = DECIMALS + 10**17;
 
     int256 constant x0 = 12800000000000000000000;
     int256 constant a0 = 38877084059945950922200000000000000000000000000000000000;
@@ -31,12 +34,15 @@ contract GasProfiler {
     int256 constant x11 = 6250000000000000000;
     int256 constant a11 = 106449445891785942956;
 
+    // Hadles 18 decimals, internally it uses 20 decimals
+    // max: log((2^255 - 1) / 10^20)   = 130.700829182905140221
+    // min: log(0.000000000000000001) = -41.446531673892822312
     function n_exp(int256 x) public returns (int256) {
         require(
             x >= -41446531673892822312 && x <= 130700829182905140221,
             "Natural exp argument must be between -41.446531673892822312 and 130.700829182905140221"
         );
-        if (x < 0) return (MAX_DECIMALS_DOUBLE / n_exp(-x));
+        if (x < 0) return (DOUBLE_DECIMALS / n_exp(-x));
         x *= 100;
         int256 ans = PRECISION;
         int256 last = 1;
@@ -108,6 +114,9 @@ contract GasProfiler {
         return (((ans * s) / PRECISION) * last) / 100;
     }
 
+    //Handles 18 decimals
+    //Min: 0.000000000000000001
+    //Max: eˆ130.700829182905140221 = 578960446186580977117854925043439539266.349923328202820000
     function n_log(int256 a) public returns (int256) {
         require(
             a > 0 &&
@@ -115,7 +124,7 @@ contract GasProfiler {
             "Natural log argument must be between 0 and 578960446186580977117854925043439539266.349923328202820000"
         );
         a *= 100;
-        if (a < PRECISION) return (-n_log((PRECISION * PRECISION) / (100 * a)));
+        if (a < PRECISION) return (-n_log(DOUBLE_PRECISION / (100 * a)));
         int256 ans = 0;
         if (a >= a0 * PRECISION) {
             ans += x0;
@@ -178,87 +187,90 @@ contract GasProfiler {
         s += t / 9;
         t = (t * z_squared) / PRECISION;
         s += t / 11;
-        t = (t * z_squared) / PRECISION;
-        s += t / 13;
-        t = (t * z_squared) / PRECISION;
-        s += t / 15;
         return (ans + 2 * s) / 100;
     }
 
-    function power(int256 x, int256 y) public returns (int256) {
-        require( 0 <= x, "x must be positive");
+    function exp(int256 x, int256 y) public returns (int256) {
+        require(0 <= x, "x must be positive");
         int256 logx_times_y;
-        if (MAX_DECIMALS - TEN_POWER17 < x && x < MAX_DECIMALS + TEN_POWER17) {
+        if (PRECISION_LOG_UNDER_BOUND < x && x < PRECISION_LOG_UPPER_BOUND) {
             int256 logbase = n_log_36(x);
-            logx_times_y = ( (logbase / MAX_DECIMALS) * y + (logbase % MAX_DECIMALS) * y / MAX_DECIMALS ) / MAX_DECIMALS;
+            logx_times_y =
+                ((logbase / DECIMALS) *
+                    y +
+                    ((logbase % DECIMALS) * y) /
+                    DECIMALS) /
+                DECIMALS;
         } else {
-            logx_times_y = n_log(x) * y / MAX_DECIMALS;
+            logx_times_y = (n_log(x) * y) / DECIMALS;
         }
         require(
-            logx_times_y >= -41446531673892822312 && logx_times_y <= 130700829182905140221,
+            logx_times_y >= -41446531673892822312 &&
+                logx_times_y <= 130700829182905140221,
             "log(x) times y must be between -41.446531673892822312 and 130.700829182905140221"
         );
-        int256 result = n_exp( logx_times_y );  
+        int256 result = n_exp(logx_times_y);
         emit showResult(result);
         return result;
     }
 
     function log(int256 base, int256 arg) public returns (int256) {
         int256 logbase;
-        if (MAX_DECIMALS - TEN_POWER17 < base && base < MAX_DECIMALS + TEN_POWER17) {
+        if (PRECISION_LOG_UNDER_BOUND < base && base < PRECISION_LOG_UPPER_BOUND) {
             logbase = n_log_36(base);
         } else {
-            logbase = n_log(base) * MAX_DECIMALS;
+            logbase = n_log(base) * DECIMALS;
         }
         int256 logarg;
-        if (MAX_DECIMALS - TEN_POWER17 < arg && arg < MAX_DECIMALS + TEN_POWER17) {
+        if (PRECISION_LOG_UNDER_BOUND < arg && arg < PRECISION_LOG_UPPER_BOUND) {
             logarg = n_log_36(arg);
         } else {
-            logarg = n_log(arg) * MAX_DECIMALS;
+            logarg = n_log(arg) * DECIMALS;
         }
-        int256 result = (logarg * MAX_DECIMALS) / logbase;
-        emit showResult( result );
+        int256 result = (logarg * DECIMALS) / logbase;
+        emit showResult(result);
         return result;
     }
 
     function exp_nat(int256 base, int256 n) public returns (int256) {
-        n /= MAX_DECIMALS;
+        n /= DECIMALS;
         int256 result = 1;
-        while(n >= 1) {
-            if ( (n%2) == 1){
-                result = (result * base) / MAX_DECIMALS;
+        while (n >= 1) {
+            if ((n % 2) == 1) {
+                result = (result * base) / DECIMALS;
                 n -= 1;
             }
-            base = (base * base) / MAX_DECIMALS;
-            n/=2;
+            base = (base * base) / DECIMALS;
+            n /= 2;
         }
-        emit showResult( result );
+        emit showResult(result);
         return result;
     }
 
     function n_log_36(int256 a) private pure returns (int256) {
-            a *= MAX_DECIMALS;
-            int256 z = (MAX_DECIMALS_DOUBLE * (a - MAX_DECIMALS_DOUBLE)) / (a + MAX_DECIMALS_DOUBLE);
-            int256 s = z;
-            int256 z_squared = (z * z) / MAX_DECIMALS_DOUBLE;
-            int256 t = (z * z_squared) / MAX_DECIMALS_DOUBLE;
-            s += t / 3;
-            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
-            s += t / 5;
-            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
-            s += t / 7;
-            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
-            s += t / 9;
-            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
-            s += t / 11;
-            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
-            s += t / 13;
-            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
-            s += t / 15;
-            t = (t * z_squared) / MAX_DECIMALS_DOUBLE;
-            s += t / 17;
-            return 2*s;
+        a *= DECIMALS;
+        int256 z = (DOUBLE_DECIMALS * (a - DOUBLE_DECIMALS)) /
+            (a + DOUBLE_DECIMALS);
+        int256 s = z;
+        int256 z_squared = (z * z) / DOUBLE_DECIMALS;
+        int256 t = (z * z_squared) / DOUBLE_DECIMALS;
+        s += t / 3;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 5;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 7;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 9;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 11;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 13;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 15;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 17;
+        return 2 * s;
     }
-    
+
     event showResult(int256 result);
 }

@@ -5,6 +5,7 @@ const {
   to18Decimals,
   createRandomNumGreaterThanOne,
   TOTAL_TEST_LOOP,
+  createRandomNum,
 } = require("../helper");
 
 const calculate = async (num) => {
@@ -23,13 +24,14 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
   it("should calculate random numbers between 1 and (2ˆ256 - 1) / 10ˆ18 correctly", async () => {
     for (let index = 0; index < TOTAL_TEST_LOOP; index++) {
       //Create random exp
-      const randomArg = createRandomNumGreaterThanOne(
-        new Decimal(578960446186580977117854925043439539266) //MAX: (2^255 -1) / (10^20 * 10^18)
-      ).toString();
+      const randomArg = createRandomNum(
+        "1",
+        "578960446186580977117854925043439539266"
+      ); //MAX: (2^255 -1) / (10^20 * 10^18)
       //Get function result
       const result = await calculate(randomArg);
       //Check error
-      checkError("log", randomArg, result.solution, result.exact, 1);
+      checkError("n_log", randomArg, result.solution, result.exact, 1);
     }
   });
   it("hould calculate random numbers between 0 an 1 correctly", async () => {
@@ -39,7 +41,7 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
       //Get function result
       const result = await calculate(randomArg);
       //Check error
-      checkError("log", randomArg, result.solution, result.exact, 1);
+      checkError("n_log", randomArg, result.solution, result.exact, 1);
     }
   });
   it("should fail for an argument greater than 578960446186580977117854925043439539266.349923328202820000", async () => {
@@ -78,12 +80,12 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
     const maxArg = "578960446186580977117854925043439539266.349923328202820000";
     const result = await calculate(maxArg);
     //Check error
-    checkError("log", maxArg, result.solution, result.exact, 1);
+    checkError("n_log", maxArg, result.solution, result.exact, 1);
   });
   it("should calculate min argument 0.000000000000000001 correctly", async () => {
     const minArg = "0.000000000000000001";
     const result = await calculate(minArg);
     //Check error
-    checkError("log", minArg, result.solution, result.exact, 1);
+    checkError("n_log", minArg, result.solution, result.exact, 1);
   });
 });

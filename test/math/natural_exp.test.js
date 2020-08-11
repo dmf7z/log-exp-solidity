@@ -24,11 +24,11 @@ contract("LogExpMath Natural Exponential", (accounts) => {
   it("should calculate random numbers between -41 and 130 correctly", async () => {
     for (let index = 0; index < TOTAL_TEST_LOOP; index++) {
       //Create random exp
-      const randomArg = createRandomNum(129, -41);
+      const randomArg = createRandomNum("-41", "129");
       //Get function result
       const result = await calculate(randomArg);
       //Check error
-      checkError("exp", randomArg, result.solution, result.exact, 2);
+      checkError("n_exp", randomArg, result.solution, result.exact, 2);
     }
   });
   it("should fail for an exponent greater than 130.700829182905140221", async () => {
@@ -56,12 +56,12 @@ contract("LogExpMath Natural Exponential", (accounts) => {
     const maxArg = "130.700829182905140221";
     const result = await calculate(maxArg);
     //Check error
-    checkError("exp", maxArg, result.solution, result.exact, 1);
+    checkError("n_exp", maxArg, result.solution, result.exact, 1);
   });
   it("should calculate min exponent -41.446531673892822312 correctly", async () => {
     const mingArg = "-41.446531673892822312";
     const result = await calculate(mingArg);
     //Check error
-    checkError("exp", mingArg, result.solution, result.exact, 1);
+    checkError("n_exp", mingArg, result.solution, result.exact, 1);
   });
 });

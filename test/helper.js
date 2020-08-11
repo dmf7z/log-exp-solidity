@@ -31,25 +31,23 @@ const getFirst18DigitsDifference = (solution, exact) => {
 };
 
 module.exports = {
-  TOTAL_TEST_LOOP: 100,
+  TOTAL_TEST_LOOP: 1000,
   E: "2.7182818284590452353602874713526624977572470936999595",
   Decimal: Decimal,
   to18Decimals,
-  createRandomNum: (max, min = 0) => {
-    const randomWhole = (
-      Math.floor(Math.random() * (max - min + 1)) + min
-    ).toString();
-    const randomDecimal = Decimal.random();
-    return randomDecimal.plus(randomWhole).toFixed(18, 1);
+
+  //Math.random() * (max - min) + min;
+  createRandomNum: (min, max) => {
+    const wholeDigitsLength = Decimal.floor(max).toFixed(0, 1).toString()
+      .length;
+    const random = Decimal.random()
+      .times(Decimal(max).minus(min))
+      .plus(min)
+      .div(new Decimal(10).pow(Math.random() * wholeDigitsLength))
+      .toFixed(18, 1);
+    return random;
   },
-  createRandomNumGreaterThanOne: (max) => {
-    const randomWhole = max
-      .minus(1)
-      .div(new Decimal(10).pow(Math.floor(Math.random() * 36) + 1))
-      .times(Decimal.random());
-    const randomDecimals = Decimal.random();
-    return randomDecimals.plus(randomWhole).toFixed(18, 1);
-  },
+
   checkError: (func, argument, solution, exact, max) => {
     const message = `Function ${func} for ${argument} reports ${solution.toString()} and exact solution ${exact.toFixed(
       18,
