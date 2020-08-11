@@ -17,9 +17,8 @@ contract("LogExpMath Gas Profiling", () => {
 
     x = to18Decimals("2");
     y = to18Decimals("4");
-    await instance.exp_nat(x,y);
-    var showResult = instance.showResult();
-    showResult.get(function(error, result) {instance.exp_nat(x,y)} ); 
+    const tx = await instance.exp_nat(x,y);
+    console.log(tx.logs[0].args['0'].toString());
     
     global.profilerSubprovider.stop();
 
