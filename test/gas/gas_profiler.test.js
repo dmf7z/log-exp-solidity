@@ -15,11 +15,11 @@ contract("LogExpMath Gas Profiling", () => {
     x = to18Decimals("1.00001");
     y = to18Decimals("12900000");
 
-//    x = to18Decimals("2");
-//    y = to18Decimals("4");
-    await instance.power(x,y);
-//    var showResult = instance.showResult();
-//    showResult.get(function(error, result) {instance.power(x,y)} ); 
+    x = to18Decimals("2");
+    y = to18Decimals("4");
+    await instance.exp_nat(x,y);
+    var showResult = instance.showResult();
+    showResult.get(function(error, result) {instance.exp_nat(x,y)} ); 
     
     global.profilerSubprovider.stop();
 

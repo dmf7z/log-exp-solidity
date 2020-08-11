@@ -221,6 +221,21 @@ contract GasProfiler {
         return result;
     }
 
+    function exp_nat(int256 base, int256 n) public returns (int256) {
+        n /= MAX_DECIMALS;
+        int256 result = 1;
+        while(n >= 1) {
+            if ( (n%2) == 1){
+                result = (result * base) / MAX_DECIMALS;
+                n -= 1;
+            }
+            base = (base * base) / MAX_DECIMALS;
+            n/=2;
+        }
+        emit showResult( result );
+        return result;
+    }
+
     function n_log_36(int256 a) private pure returns (int256) {
             a *= MAX_DECIMALS;
             int256 z = (MAX_DECIMALS_DOUBLE * (a - MAX_DECIMALS_DOUBLE)) / (a + MAX_DECIMALS_DOUBLE);
