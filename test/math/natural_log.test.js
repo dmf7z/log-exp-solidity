@@ -34,7 +34,7 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
       checkError("n_log", randomArg, result.solution, result.exact, 1);
     }
   });
-  it("hould calculate random numbers between 0 an 1 correctly", async () => {
+  it("should calculate random numbers between 0 an 1 correctly", async () => {
     for (let index = 0; index < TOTAL_TEST_LOOP; index++) {
       //Create random num
       const randomArg = Decimal.random().toFixed(18, 1);
@@ -44,12 +44,12 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
       checkError("n_log", randomArg, result.solution, result.exact, 1);
     }
   });
-  it("should fail for an argument greater than 578960446186580977117854925043439539266.349923328202820000", async () => {
-    const overflowArg =
-      "578960446186580977117854925043439539266.349923328202820001";
+  it("should fail for an argument greater than max int256", async () => {
+    const overflowArg  = "57896044618658097711785492504343953926634992332820282019728.792003956564819968";
+
     let error = null;
     try {
-      await calculate(overflowArg);
+      console.log( await calculate(overflowArg) );
     } catch (err) {
       error = err;
     }
@@ -76,8 +76,8 @@ contract("LogExpMath Natural Logarithm", (accounts) => {
     }
     expect(error).to.be.an("Error");
   });
-  it("should calculate max argument 578960446186580977117854925043439539266.349923328202820000 correctly", async () => {
-    const maxArg = "578960446186580977117854925043439539266.349923328202820000";
+  it("should calculate max int256 argument correctly", async () => {
+    const maxArg = "57896044618658097711785492504343953926634992332820282019728.792003956564819967";
     const result = await calculate(maxArg);
     //Check error
     checkError("n_log", maxArg, result.solution, result.exact, 1);

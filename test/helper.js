@@ -31,7 +31,7 @@ const getFirst18DigitsDifference = (solution, exact) => {
 };
 
 module.exports = {
-  TOTAL_TEST_LOOP: 1000,
+  TOTAL_TEST_LOOP: 10,
   E: "2.7182818284590452353602874713526624977572470936999595",
   Decimal: Decimal,
   to18Decimals,

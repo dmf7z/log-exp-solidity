@@ -1,5 +1,11 @@
 pragma solidity ^0.5.7;
 
+/**
+ * @title Ethereum library for logarithm and exponential functions with 18 decimal precision.
+ * @author Fernando Martinelli - @fernandomartinelli
+ * @author Sergio Yuhjtman - @sergioyuhjtman
+ * @author Daniel Fernandez - @dmf7z
+ */
 library LogExpMath {
     int256 constant DECIMALS = 10**18;
     int256 constant DOUBLE_DECIMALS = DECIMALS * DECIMALS;
@@ -8,9 +14,9 @@ library LogExpMath {
     int256 constant PRECISION_LOG_UNDER_BOUND = DECIMALS - 10**17;
     int256 constant PRECISION_LOG_UPPER_BOUND = DECIMALS + 10**17;
 
-    int256 constant x0 = 12800000000000000000000;
+    int256 constant x0 = 128000000000000000000;
     int256 constant a0 = 38877084059945950922200000000000000000000000000000000000;
-    int256 constant x1 = 6400000000000000000000;
+    int256 constant x1 = 64000000000000000000;
     int256 constant a1 = 6235149080811616882910000000;
     int256 constant x2 = 3200000000000000000000;
     int256 constant a2 = 7896296018268069516100000000000000;
@@ -33,16 +39,19 @@ library LogExpMath {
     int256 constant x11 = 6250000000000000000;
     int256 constant a11 = 106449445891785942956;
 
-    // Hadles 18 decimals, internally it uses 20 decimals
-    // max: log((2^255 - 1) / 10^20)   = 130.700829182905140221
-    // min: log(0.000000000000000001) = -41.446531673892822312
+    /**
+     * Calculate the natural exponentiation of a number with 18 decimals precision.
+     * @param x Exponent with 18 decimal places.
+     * @notice Max x is log((2^255 - 1) / 10^20) = 130.700829182905140221
+     * @notice Min x log(0.000000000000000001) = -41.446531673892822312
+     * @return eˆx
+     */
     function n_exp(int256 x) public pure returns (int256) {
         require(
             x >= -41446531673892822312 && x <= 130700829182905140221,
             "Natural exp argument must be between -41.446531673892822312 and 130.700829182905140221"
         );
         if (x < 0) return (DOUBLE_DECIMALS / n_exp(-x));
-        x *= 100;
         int256 ans = PRECISION;
         int256 last = 1;
         if (x >= x0) {
@@ -53,6 +62,7 @@ library LogExpMath {
             last *= a1;
             x -= x1;
         }
+        x *= 100;
         if (x >= x2) {
             ans = (ans * a2) / PRECISION;
             x -= x2;
@@ -113,26 +123,25 @@ library LogExpMath {
         return (((ans * s) / PRECISION) * last) / 100;
     }
 
-    //Handles 18 decimals
-    //Min: 0.000000000000000001
-    //Max: eˆ130.700829182905140221 = 578960446186580977117854925043439539266.349923328202820000
+    /**
+     * Calculate the natural logarithm of a number with 18 decimals precision.
+     * @param a Positive number with 18 decimal places.
+     * @return ln(x)
+     */
     function n_log(int256 a) public pure returns (int256) {
-        require(
-            a > 0 &&
-                a <= 578960446186580977117854925043439539266349923328202820000,
-            "Natural log argument must be between 0 and 578960446186580977117854925043439539266.349923328202820000"
-        );
-        a *= 100;
-        if (a < PRECISION) return (-n_log(DOUBLE_PRECISION / (100 * a)));
+        require(a > 0, "Natural log argument must be positive");
+        if (a < DECIMALS) return (-n_log(DOUBLE_DECIMALS / a));
         int256 ans = 0;
-        if (a >= a0 * PRECISION) {
+        if (a >= a0 * DECIMALS) {
             ans += x0;
             a /= a0;
         }
-        if (a >= a1 * PRECISION) {
+        if (a >= a1 * DECIMALS) {
             ans += x1;
             a /= a1;
         }
+        a *= 100;
+        ans *= 100;
         if (a >= a2) {
             ans += x2;
             a = (a * PRECISION) / a2;
@@ -189,25 +198,13 @@ library LogExpMath {
         return (ans + 2 * s) / 100;
     }
 
-    function n_log_36(int256 a) public pure returns (int256) {
-        a *= DECIMALS;
-        int256 z = (DOUBLE_DECIMALS * (a - DOUBLE_DECIMALS)) /
-            (a + DOUBLE_DECIMALS);
-        int256 s = z;
-        int256 z_squared = (z * z) / DOUBLE_DECIMALS;
-        int256 t = (z * z_squared) / DOUBLE_DECIMALS;
-        s += t / 3;
-        t = (t * z_squared) / DOUBLE_DECIMALS;
-        s += t / 5;
-        t = (t * z_squared) / DOUBLE_DECIMALS;
-        s += t / 7;
-        t = (t * z_squared) / DOUBLE_DECIMALS;
-        s += t / 9;
-        t = (t * z_squared) / DOUBLE_DECIMALS;
-        s += t / 11;
-        return 2 * s;
-    }
-
+    /**
+     * Computes x to the power of y for numbers with 18 decimals precision.
+     * @param x Base with 18 decimal places.
+     * @param y Exponent with 18 decimal places.
+     * @notice Must fulfil: -41.446531673892822312  < (log(x) * y) <  130.700829182905140221
+     * @return xˆy
+     */
     function exp(int256 x, int256 y) public pure returns (int256) {
         require(0 <= x, "x must be positive");
         int256 logx_times_y;
@@ -228,5 +225,60 @@ library LogExpMath {
             "log(x) times y must be between -41.446531673892822312 and 130.700829182905140221"
         );
         return n_exp(logx_times_y);
+    }
+
+    /**
+     * Computes log of a number in base of another number, both numbers with 18 decimals precision.
+     * @param arg Argument with 18 decimal places.
+     * @param base Base with 18 decimal places.
+     * @notice Must fulfil: -41.446531673892822312  < (log(x) * y) <  130.700829182905140221
+     * @return log[base](arg)
+     */
+    function log(int256 arg, int256 base) public pure returns (int256) {
+        int256 logbase;
+        if (
+            PRECISION_LOG_UNDER_BOUND < base && base < PRECISION_LOG_UPPER_BOUND
+        ) {
+            logbase = n_log_36(base);
+        } else {
+            logbase = n_log(base) * DECIMALS;
+        }
+        int256 logarg;
+        if (
+            PRECISION_LOG_UNDER_BOUND < arg && arg < PRECISION_LOG_UPPER_BOUND
+        ) {
+            logarg = n_log_36(arg);
+        } else {
+            logarg = n_log(arg) * DECIMALS;
+        }
+        return (logarg * DECIMALS) / logbase;
+    }
+
+    /**
+     * Private function to calculate the natural logarithm of a number with 36 decimals precision.
+     * @param a Positive number with 18 decimal places.
+     * @return ln(x)
+     */
+    function n_log_36(int256 a) private pure returns (int256) {
+        a *= DECIMALS;
+        int256 z = (DOUBLE_DECIMALS * (a - DOUBLE_DECIMALS)) /
+            (a + DOUBLE_DECIMALS);
+        int256 s = z;
+        int256 z_squared = (z * z) / DOUBLE_DECIMALS;
+        int256 t = (z * z_squared) / DOUBLE_DECIMALS;
+        s += t / 3;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 5;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 7;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 9;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 11;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 13;
+        t = (t * z_squared) / DOUBLE_DECIMALS;
+        s += t / 15;
+        return 2 * s;
     }
 }

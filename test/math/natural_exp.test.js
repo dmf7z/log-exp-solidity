@@ -31,7 +31,7 @@ contract("LogExpMath Natural Exponential", (accounts) => {
       checkError("n_exp", randomArg, result.solution, result.exact, 2);
     }
   });
-  it("should fail for an exponent greater than 130.700829182905140221", async () => {
+  it("should fail for an exponent greater than log((2^255 - 1) / 10^20)", async () => {
     const overflowArg = "130.700829182905140222";
     let error = null;
     try {
@@ -41,7 +41,7 @@ contract("LogExpMath Natural Exponential", (accounts) => {
     }
     expect(error).to.be.an("Error");
   });
-  it("should fail for an exponent lower than -41.446531673892822312", async () => {
+  it("should fail for an exponent lower than log(0.000000000000000001) ", async () => {
     const underflowArg = "-41.446531673892822313";
 
     let error = null;
@@ -52,13 +52,13 @@ contract("LogExpMath Natural Exponential", (accounts) => {
     }
     expect(error).to.be.an("Error");
   });
-  it("should calculate max exponent 130.700829182905140221 correctly", async () => {
+  it("should calculate max exponent log((2^255 - 1) / 10^20) correctly", async () => {
     const maxArg = "130.700829182905140221";
     const result = await calculate(maxArg);
     //Check error
     checkError("n_exp", maxArg, result.solution, result.exact, 1);
   });
-  it("should calculate min exponent -41.446531673892822312 correctly", async () => {
+  it("should calculate min exponent log(0.000000000000000001) correctly", async () => {
     const mingArg = "-41.446531673892822312";
     const result = await calculate(mingArg);
     //Check error

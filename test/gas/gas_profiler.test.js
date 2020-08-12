@@ -9,19 +9,9 @@ contract("LogExpMath Gas Profiling", () => {
     //Profile gas
     global.profilerSubprovider.start();
     //await instance.n_exp(to18Decimals("99.700829182905140222"));
-
-    await instance.n_log(to18Decimals("81.716982335689463286"));
+    //await instance.n_log(to18Decimals("81.716982335689463286"));
     //await instance.exp(to18Decimals("0.32232323"), to18Decimals("4.0000321"));
-
-    // x = to18Decimals("1.00001");
-    // y = to18Decimals("12900000");
-
-    // x = to18Decimals("3");
-    // y = to18Decimals("99");
-    // const tx = await instance.exp_nat(x,y);
-
-  //  console.log(tx.logs[0].args['0'].toString());
-    
+    await instance.log(to18Decimals("1.000000000000000001"),to18Decimals("130700829182905140221")); 
     global.profilerSubprovider.stop();
 
     await global.profilerSubprovider.writeProfilerOutputAsync();
