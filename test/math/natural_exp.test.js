@@ -24,11 +24,21 @@ contract("LogExpMath Natural Exponential", (accounts) => {
   it("should calculate random numbers between -41 and 130 correctly", async () => {
     for (let index = 0; index < TOTAL_TEST_LOOP; index++) {
       //Create random exp
-      const randomArg = createRandomNum("-41", "129");
+      const randomArg = createRandomNum("-4.605170", "129", false);
       //Get function result
       const result = await calculate(randomArg);
       //Check error
       checkError("n_exp", randomArg, result.solution, result.exact, 2);
+    }
+  });
+  it("should calculate random numbers between -41 and 130 correctly", async () => {
+    for (let index = 0; index < TOTAL_TEST_LOOP; index++) {
+      //Create random exp
+      const randomArg = createRandomNum("-41", "-4.605170", false);
+      //Get function result
+      const result = await calculate(randomArg);
+      //Check error
+      checkError("n_exp", randomArg, result.solution, result.exact, 1);
     }
   });
   it("should fail for an exponent greater than log((2^255 - 1) / 10^20)", async () => {
