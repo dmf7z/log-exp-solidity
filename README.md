@@ -74,7 +74,7 @@ log: 2*10^(-17)
 The maximum errors of log and exp are derived from the errors of n-exp and n-log.
 The relative error of exp can be bounded more precisely by 10^(-17)*(1+log(x)).
 
-Note: since this library is optimized for real values, it is possible that the result of an exponentiation between two natural numbers is not a natural number.
+Note: since this library is optimized for real values, it is possible that an exponentiation between two natural numbers returns a number that is not natural.
 
 ## Gas profiling
 _Natural Exponential n_exp(x)_
@@ -98,7 +98,7 @@ _Exponential  exp(x,y)_
   max: 3232 gas
 
 
-_Logarithm log(x,y)_
+_Logarithm log(base,arg)_
 
   min: 2032 gas
   
