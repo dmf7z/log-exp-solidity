@@ -3,7 +3,7 @@ Ethereum library for logarithm and exponential functions with 18 decimal precisi
 
 ## Overview
 
-This library provides math functions for natural logarithm and exponentiation, as well as logarithm and exponentiation for general positive bases. It implements low gas cost solutions, while returning low relative errors when possible.
+This library provides math functions for natural logarithm and exponentiation, as well as logarithm and exponentiation for general positive bases. It implements low gas cost solutions, while returning low relative errors when numerically possible. In order to optimize the gas cost, loops were avoided in favor of repetition of code.
 
 ## Functions
 
@@ -26,7 +26,7 @@ Computes ln(a). The input must be positive.
 
 ```function exp(int256 x, int256 y) public pure returns (int256)```
 
-Computes x to the power of y. The input x must be positive and log(x)y, interpreted as real numbers, must be between -41.446531673892822312 and 130.700829182905140221.
+Computes x to the power of y. The input x must be positive and log(x)y must be between -41.446531673892822312 and 130.700829182905140221.
 
 * General logarithm
 
@@ -63,12 +63,17 @@ For each function, we give an upper bound for the relative error, defined as
 
 Maximum relative errors for each function (up to the exception above)
 
-n-exp 10^(-17)
-n-log 10^(-17)
-exp
-log
+n-exp: 10^(-17)
+
+n-log: 10^(-17)
+
+exp: 137*10^(-17)
+
+log: 2*10^(-17)
+
+The maximum errors of log and exp are derived from the errors of n-exp and n-log.
+The relative error of exp can be bounded more precisely by 10^(-17)*(1+log(x)).
 
 Note: since this library is optimized for real values, it is possible that the result of an exponentiation between two natural numbers is not a natural number.
 
 ## Gas profiling
-
