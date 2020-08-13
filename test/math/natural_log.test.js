@@ -6,12 +6,23 @@ const {
   createRandomNumGreaterThanOne,
   TOTAL_TEST_LOOP,
   createRandomNum,
+  updateGasInfo,
 } = require("../helper");
+
+const gasResults = {
+  minGas: null,
+  maxGas: null,
+};
 
 const calculate = async (num) => {
   const instance = await LogExpMath.deployed();
   //Execute natural log function
   const solution = await instance.n_log.call(to18Decimals(num));
+  updateGasInfo(
+    instance.n_log.estimateGas(to18Decimals(num)),
+    "n_log: " + num,
+    gasResults
+  );
   //Calculate log with Decimal library
   const exact = Decimal.ln(new Decimal(num));
   return {
@@ -21,6 +32,10 @@ const calculate = async (num) => {
 };
 
 contract("LogExpMath Natural Logarithm", (accounts) => {
+  after(function () {
+    console.log(`minGas: ${gasResults.minGas.gas.toString()} for ${gasResults.minGas.info}`);
+    console.log(`maxGas: ${gasResults.maxGas.gas.toString()} for ${gasResults.maxGas.info}`);
+  });
   it("should calculate random numbers between 1 and (2ˆ256 - 1) / 10ˆ18 correctly", async () => {
     for (let index = 0; index < TOTAL_TEST_LOOP; index++) {
       //Create random exp

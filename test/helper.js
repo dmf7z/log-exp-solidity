@@ -31,7 +31,7 @@ const getFirst18DigitsDifference = (solution, exact) => {
 };
 
 module.exports = {
-  TOTAL_TEST_LOOP: 10,
+  TOTAL_TEST_LOOP: 1000,
   E: "2.7182818284590452353602874713526624977572470936999595",
   Decimal: Decimal,
   to18Decimals,
@@ -62,4 +62,19 @@ module.exports = {
       `${message} has a bigger difference than |${max}| in the digit 18.`
     ).to.be.within(0, max);
   },
+  updateGasInfo: async (promise, info, gasResults) => {
+    const gasEstimate = await promise;
+    if (!gasResults.minGas || gasEstimate < gasResults.minGas.gas) {
+      gasResults.minGas = {
+        gas: gasEstimate,
+        info: info,
+      };
+    }
+    if (!gasResults.maxGas || gasEstimate > gasResults.maxGas.gas) {
+      gasResults.maxGas = {
+        gas: gasEstimate,
+        info: info,
+      };
+    }
+  }
 };

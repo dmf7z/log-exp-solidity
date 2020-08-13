@@ -4,14 +4,25 @@ const {
   checkError,
   to18Decimals,
   createRandomNum,
+  updateGasInfo,
   E,
   TOTAL_TEST_LOOP,
 } = require("../helper");
+
+const gasResults = {
+  minGas: null,
+  maxGas: null,
+};
 
 const calculate = async (x, y) => {
   const instance = await LogExpMath.deployed();
   //Execute exp function
   const solution = await instance.exp.call(to18Decimals(x), to18Decimals(y));
+  updateGasInfo(
+    instance.exp.estimateGas(to18Decimals(x), to18Decimals(y)),
+    "exp: " + x + ", " + y,
+    gasResults
+  );
   //Calculate result with Decimal library
   const exact = Decimal(x).pow(y);
   return {
@@ -28,6 +39,10 @@ const getMaxY =  (x) => {
 };
 
 contract("LogExpMath Exponential", (accounts) => {
+  after(function () {
+    console.log(`minGas: ${gasResults.minGas.gas.toString()} for ${gasResults.minGas.info}`);
+    console.log(`maxGas: ${gasResults.maxGas.gas.toString()} for ${gasResults.maxGas.info}`);
+  });
   it("should calculate random numbers for x between 0 and max int256 correctly", async () => {
     for (let index = 0; index < TOTAL_TEST_LOOP; index++) {
       //Create random x
