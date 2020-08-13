@@ -37,13 +37,13 @@ module.exports = {
   to18Decimals,
 
   //Math.random() * (max - min) + min;
-  createRandomNum: (min, max) => {
+  createRandomNum: (min, max, div = true) => {
     const wholeDigitsLength = Decimal.floor(max).toFixed(0, 1).toString()
       .length;
     const random = Decimal.random()
       .times(Decimal(max).minus(min))
       .plus(min)
-      .div(new Decimal(10).pow(Math.random() * wholeDigitsLength))
+      .div(div ? new Decimal(10).pow(Math.random() * wholeDigitsLength) : 1)
       .toFixed(18, 1);
     return random;
   },

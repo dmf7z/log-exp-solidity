@@ -24,6 +24,7 @@ const getMaxY =  (x) => {
   return Decimal("130.700829182905140221")
     .div(Decimal.ln(new Decimal(x)))
     .toFixed(18, 1);
+    
 };
 
 contract("LogExpMath Exponential", (accounts) => {
