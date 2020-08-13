@@ -76,4 +76,35 @@ The relative error of exp can be bounded more precisely by 10^(-17)*(1+log(x)).
 
 Note: since this library is optimized for real values, it is possible that the result of an exponentiation between two natural numbers is not a natural number.
 
+<<<<<<< HEAD
 ## Gas profiling
+=======
+_Natural Exponential n_exp(x)_
+
+min: 1280 gas
+
+max: 2071 gas
+
+
+_Natural Logarithm n_log(x)_
+
+min: 883 gas
+
+max: 1333 gas
+
+
+_Exponential  exp(x,y)_
+
+  min: 2523 gas
+  
+  max: 3232 gas
+
+
+_Logarithm log(x,y)_
+
+  min: 2032 gas
+  
+  max: 2844 gas
+
+
+>>>>>>> 9b7f13af78f4dfbc440edeb4de645cb1e44f86ba
