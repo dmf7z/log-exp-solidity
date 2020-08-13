@@ -46,7 +46,7 @@ contract("LogExpMath Exponential", (accounts) => {
         `(${randomX}, ${randomY})`,
         result.solution,
         result.exact,
-        2
+        131
       );
     }
   });
@@ -85,7 +85,7 @@ contract("LogExpMath Exponential", (accounts) => {
     const y = "130700829182905140221";
     const result = await calculate(x, y);
     //Check error
-    checkError("exp", `(${x}, ${y})`, result.solution, result.exact, 114);
+    checkError("exp", `(${x}, ${y})`, result.solution, result.exact, 131);
   });
   it("should fail x = 0.000000000000000001 and y >= 1", async () => {
     const x = "0.000000000000000001";
@@ -103,7 +103,7 @@ contract("LogExpMath Exponential", (accounts) => {
     const y = "1";
     const result = await calculate(x, y);
     //Check error
-    checkError("exp", `(${x}, ${y})`, result.solution, result.exact, 114);
+    checkError("exp", `(${x}, ${y})`, result.solution, result.exact, 1);
   });
 
 });
