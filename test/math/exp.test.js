@@ -12,8 +12,10 @@ const calculate = async (x, y) => {
   const instance = await LogExpMath.deployed();
   //Execute exp function
   const solution = await instance.exp.call(to18Decimals(x), to18Decimals(y));
+  console.log(solution.toString())
   //Calculate result with Decimal library
   const exact = Decimal(x).pow(y);
+  console.log(exact)
   return {
     solution,
     exact,
@@ -101,6 +103,13 @@ contract("LogExpMath Exponential", (accounts) => {
   it("should calculate x = 0.000000000000000001 and y = 1 correctly", async () => {
     const x = "0.000000000000000001";
     const y = "1";
+    const result = await calculate(x, y);
+    //Check error
+    checkError("exp", `(${x}, ${y})`, result.solution, result.exact, 1);
+  });
+  it("should calculate x = y= 287264955081783200000000000000000000000 correctly", async () => {
+    const x = "28726495508178320000";
+    const y = "57896044618658097711785492504343953926634992332820282019728";
     const result = await calculate(x, y);
     //Check error
     checkError("exp", `(${x}, ${y})`, result.solution, result.exact, 1);
