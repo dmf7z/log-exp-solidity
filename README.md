@@ -72,3 +72,20 @@ Note: since this library is optimized for real values, it is possible that the r
 
 ## Gas profiling
 
+#Natural Exponential n_exp(x)
+min: 1280 gas
+max: 2071 gas
+
+#Natural Logarithm n_log(x)
+min: 883 gas
+max: 1333 gas
+
+#Exponential  exp(x,y)
+min: 2523 gas
+max: 3232 gas
+
+#Logarithm log(x,y)
+min: 2032 gas
+max: 2844 gas
+
+

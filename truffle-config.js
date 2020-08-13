@@ -24,33 +24,6 @@
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
-const ProviderEngine = require("web3-provider-engine");
-const { TruffleArtifactAdapter } = require("@0x/sol-trace");
-const { ProfilerSubprovider } = require("@0x/sol-profiler");
-const WebsocketSubprovider = require("web3-provider-engine/subproviders/websocket.js");
-
-const projectRoot = "";
-const solcVersion = "0.5.16+commit.9c3226ce";
-const defaultFromAddress = "0x5409ed021d9299bf6814279a6a1411a7e866a631";
-const isVerbose = true;
-const artifactAdapter = new TruffleArtifactAdapter(projectRoot, solcVersion);
-const provider = new ProviderEngine();
-
-global.profilerSubprovider = new ProfilerSubprovider(
-  artifactAdapter,
-  defaultFromAddress,
-  isVerbose
-);
-global.profilerSubprovider.stop();
-provider.addProvider(global.profilerSubprovider);
-provider.addProvider(new WebsocketSubprovider({ rpcUrl: "http://127.0.0.1:8545" }));
-provider.start((err) => {
-  if (err !== undefined) {
-    console.log(err);
-    process.exit(1);
-  }
-});
-
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -70,8 +43,9 @@ module.exports = {
     // options below to some value.
     //
     development: {
-      provider,
-      network_id: "*",
+      host: "127.0.0.1", // Localhost (default: none)
+      port: 8545, // Standard Ethereum port (default: none)
+      network_id: "*", // Any network (default: none)
     },
     // Another network with more advanced options...
     // advanced: {
