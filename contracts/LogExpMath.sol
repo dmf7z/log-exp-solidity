@@ -129,7 +129,7 @@ library LogExpMath {
      * @return ln(x)
      */
     function n_log(int256 a) public pure returns (int256) {
-        require(a > 0, "Natural log argument must be positive");
+        require(a > 0, "Argument must be positive");
         if (a < DECIMALS) return (-n_log(DOUBLE_DECIMALS / a));
         int256 ans = 0;
         if (a >= a0 * DECIMALS) {
@@ -231,7 +231,7 @@ library LogExpMath {
      * Computes log of a number in base of another number, both numbers with 18 decimals precision.
      * @param arg Argument with 18 decimal places.
      * @param base Base with 18 decimal places.
-     * @notice Must fulfil: -41.446531673892822312  < (log(x) * y) <  130.700829182905140221
+     * @notice Must fulfil: Must fulfil: x > 0 and y > 0
      * @return log[base](arg)
      */
     function log(int256 arg, int256 base) public pure returns (int256) {
