@@ -210,7 +210,7 @@ library LogExpMath {
      */
     function exp(int256 x, int256 y) public pure returns (int256) {
         require(0 < x, "x must be positive");
-        require( -MILD_EXPONENT_BOUND < y && y < MILD_EXPONENT_BOUND, "input y has too many digits");
+        require( -MILD_EXPONENT_BOUND < y && y < MILD_EXPONENT_BOUND, "absolute value of input y has to be less than 2**254 / 10**20");
         int256 logx_times_y;
         if (PRECISION_LOG_UNDER_BOUND < x && x < PRECISION_LOG_UPPER_BOUND) {
             int256 logbase = n_log_36(x);
