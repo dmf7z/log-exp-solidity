@@ -17,30 +17,30 @@ library LogExpMath {
     int256 constant EXPONENT_UB = 130700829182905140221;
     int256 constant MILD_EXPONENT_BOUND = 2**254 / PRECISION;
 
-    int256 constant x0 = 128000000000000000000;
-    int256 constant a0 = 38877084059945950922200000000000000000000000000000000000;
-    int256 constant x1 = 64000000000000000000;
-    int256 constant a1 = 6235149080811616882910000000;
-    int256 constant x2 = 3200000000000000000000;
-    int256 constant a2 = 7896296018268069516100000000000000;
-    int256 constant x3 = 1600000000000000000000;
-    int256 constant a3 = 888611052050787263676000000;
-    int256 constant x4 = 800000000000000000000;
-    int256 constant a4 = 298095798704172827474000;
-    int256 constant x5 = 400000000000000000000;
-    int256 constant a5 = 5459815003314423907810;
-    int256 constant x6 = 200000000000000000000;
-    int256 constant a6 = 738905609893065022723;
-    int256 constant x7 = 100000000000000000000;
-    int256 constant a7 = 271828182845904523536;
-    int256 constant x8 = 50000000000000000000;
-    int256 constant a8 = 164872127070012814685;
-    int256 constant x9 = 25000000000000000000;
-    int256 constant a9 = 128402541668774148407;
-    int256 constant x10 = 12500000000000000000;
-    int256 constant a10 = 113314845306682631683;
-    int256 constant x11 = 6250000000000000000;
-    int256 constant a11 = 106449445891785942956;
+    int256 constant x0 = 128000000000000000000; //2ˆ7
+    int256 constant a0 = 38877084059945950922200000000000000000000000000000000000; //eˆ(x0)
+    int256 constant x1 = 64000000000000000000; //2ˆ6
+    int256 constant a1 = 6235149080811616882910000000; //eˆ(x1)
+    int256 constant x2 = 3200000000000000000000; //2ˆ5
+    int256 constant a2 = 7896296018268069516100000000000000; //eˆ(x2)
+    int256 constant x3 = 1600000000000000000000; //2ˆ4
+    int256 constant a3 = 888611052050787263676000000; //eˆ(x3)
+    int256 constant x4 = 800000000000000000000; //2ˆ3
+    int256 constant a4 = 298095798704172827474000; //eˆ(x4)
+    int256 constant x5 = 400000000000000000000; //2ˆ2
+    int256 constant a5 = 5459815003314423907810; //eˆ(x5)
+    int256 constant x6 = 200000000000000000000; //2ˆ1
+    int256 constant a6 = 738905609893065022723; //eˆ(x6)
+    int256 constant x7 = 100000000000000000000; //2ˆ0
+    int256 constant a7 = 271828182845904523536; //eˆ(x7)
+    int256 constant x8 = 50000000000000000000; //2ˆ-1
+    int256 constant a8 = 164872127070012814685; //eˆ(x8)
+    int256 constant x9 = 25000000000000000000; //2ˆ-2
+    int256 constant a9 = 128402541668774148407; //eˆ(x9)
+    int256 constant x10 = 12500000000000000000; //2ˆ-3
+    int256 constant a10 = 113314845306682631683; //eˆ(x10)
+    int256 constant x11 = 6250000000000000000; //2ˆ-4
+    int256 constant a11 = 106449445891785942956; //eˆ(x11)
 
     /**
      * Calculate the natural exponentiation of a number with 18 decimals precision.
@@ -210,17 +210,23 @@ library LogExpMath {
      */
     function exp(int256 x, int256 y) public pure returns (int256) {
         require(0 < x, "x must be positive");
-        require( -MILD_EXPONENT_BOUND < y && y < MILD_EXPONENT_BOUND, "absolute value of input y has to be less than 2**254 / 10**20");
+        require(
+            -MILD_EXPONENT_BOUND < y && y < MILD_EXPONENT_BOUND,
+            "absolute value of input y has to be less than 2**254 / 10**20"
+        );
         int256 logx_times_y;
         if (PRECISION_LOG_UNDER_BOUND < x && x < PRECISION_LOG_UPPER_BOUND) {
             int256 logbase = n_log_36(x);
-            logx_times_y = ((logbase / DECIMALS) * y + 
-                ((logbase % DECIMALS) * y) / DECIMALS);
+            logx_times_y = ((logbase / DECIMALS) *
+                y +
+                ((logbase % DECIMALS) * y) /
+                DECIMALS);
         } else {
             logx_times_y = n_log(x) * y;
         }
         require(
-            EXPONENT_LB * DECIMALS <= logx_times_y && logx_times_y <= EXPONENT_UB * DECIMALS,
+            EXPONENT_LB * DECIMALS <= logx_times_y &&
+                logx_times_y <= EXPONENT_UB * DECIMALS,
             "log(x) times y must be between -41.446531673892822312 and 130.700829182905140221"
         );
         logx_times_y /= DECIMALS;

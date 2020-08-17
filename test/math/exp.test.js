@@ -20,11 +20,10 @@ const calculate = async (x, y) => {
   };
 };
 
-const getMaxY =  (x) => {
+const getMaxY = (x) => {
   return Decimal("130.700829182905140221")
     .div(Decimal.ln(new Decimal(x)))
     .toFixed(18, 1);
-    
 };
 
 contract("LogExpMath Exponential", (accounts) => {
@@ -51,7 +50,8 @@ contract("LogExpMath Exponential", (accounts) => {
     }
   });
   it("should fail x=[max int256] and y > 0.965964774603728197", async () => {
-    const x = "57896044618658097711785492504343953926634992332820282019728.792003956564819967";
+    const x =
+      "57896044618658097711785492504343953926634992332820282019728.792003956564819967";
     const y = "0.965964774603728198";
     let error = null;
     try {
@@ -62,7 +62,8 @@ contract("LogExpMath Exponential", (accounts) => {
     expect(error).to.be.an("Error");
   });
   it("should calculate x=[max int256] and y = 0.965964774603728197 correctly", async () => {
-    const x = "57896044618658097711785492504343953926634992332820282019728.792003956564819967";
+    const x =
+      "57896044618658097711785492504343953926634992332820282019728.792003956564819967";
     const y = "0.965964774603728197";
     const result = await calculate(x, y);
 
@@ -105,5 +106,15 @@ contract("LogExpMath Exponential", (accounts) => {
     //Check error
     checkError("exp", `(${x}, ${y})`, result.solution, result.exact, 1);
   });
-
+  it("should overflow when calculating x = y= 287264955081783200000000000000000000000 correctly", async () => {
+    const x = "28726495508178320000";
+    const y = "57896044618658097711785492504343953926634992332820282019728";
+    let error = null;
+    try {
+      await calculate(x, y);
+    } catch (err) {
+      error = err;
+    }
+    expect(error).to.be.an("Error");
+  });
 });
