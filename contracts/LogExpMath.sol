@@ -15,7 +15,7 @@ library LogExpMath {
     int256 constant PRECISION_LOG_UPPER_BOUND = DECIMALS + 10**17;
     int256 constant EXPONENT_LB = -41446531673892822312;
     int256 constant EXPONENT_UB = 130700829182905140221;
-    int256 constant MILD_EXPONENT_BOUND = 2**254 / PRECISION;
+    uint256 constant MILD_EXPONENT_BOUND = 2**254 / uint256(PRECISION);
 
     int256 constant x0 = 128000000000000000000; //2ˆ7
     int256 constant a0 = 38877084059945950922200000000000000000000000000000000000; //eˆ(x0)
@@ -208,21 +208,23 @@ library LogExpMath {
      * @notice Must fulfil: -41.446531673892822312  < (log(x) * y) <  130.700829182905140221
      * @return xˆy
      */
-    function exp(int256 x, int256 y) public pure returns (int256) {
-        require(0 < x, "x must be positive");
+    function pow(uint256 x, uint256 y) public pure returns (uint256) {
+        require(0 < x && x < 2**255, "x must be positive and less than 2**255"); // uint256 can be casted to a positive int256 
         require(
-            -MILD_EXPONENT_BOUND < y && y < MILD_EXPONENT_BOUND,
-            "absolute value of input y has to be less than 2**254 / 10**20"
+            0 <= y && y < MILD_EXPONENT_BOUND,
+            "input y has to be positive and less than 2**254 / 10**20"
         );
+        int256 x_int256 = int256(x);
+        int256 y_int256 = int256(y);
         int256 logx_times_y;
-        if (PRECISION_LOG_UNDER_BOUND < x && x < PRECISION_LOG_UPPER_BOUND) {
-            int256 logbase = n_log_36(x);
+        if (PRECISION_LOG_UNDER_BOUND < x_int256 && x_int256 < PRECISION_LOG_UPPER_BOUND) {
+            int256 logbase = n_log_36(x_int256);
             logx_times_y = ((logbase / DECIMALS) *
-                y +
-                ((logbase % DECIMALS) * y) /
+                y_int256 +
+                ((logbase % DECIMALS) * y_int256) /
                 DECIMALS);
         } else {
-            logx_times_y = n_log(x) * y;
+            logx_times_y = n_log(x_int256) * y_int256;
         }
         require(
             EXPONENT_LB * DECIMALS <= logx_times_y &&
@@ -230,7 +232,7 @@ library LogExpMath {
             "log(x) times y must be between -41.446531673892822312 and 130.700829182905140221"
         );
         logx_times_y /= DECIMALS;
-        return n_exp(logx_times_y);
+        return uint256(n_exp(logx_times_y));
     }
 
     /**
