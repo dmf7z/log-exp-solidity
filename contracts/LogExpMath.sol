@@ -67,7 +67,7 @@ library LogExpMath {
      * @notice Min x log(0.000000000000000001) = -41.446531673892822312
      * @return eˆx
      */
-    function n_exp(int256 x) internal pure returns (int256) {
+    function n_exp(int256 x) public pure returns (int256) {
         require(
             x >= EXPONENT_LB && x <= EXPONENT_UB,
             "Natural exp argument must be between -41.446531673892822312 and 130.700829182905140221"
@@ -149,7 +149,7 @@ library LogExpMath {
      * @param a Positive number with 18 decimal places.
      * @return ln(x)
      */
-    function n_log(int256 a) internal pure returns (int256) {
+    function n_log(int256 a) public pure returns (int256) {
         require(a > 0, "Natural log argument must be positive");
         if (a < DECIMALS) return (-n_log(DOUBLE_DECIMALS / a));
         int256 ans = 0;
@@ -226,7 +226,7 @@ library LogExpMath {
      * @notice Must fulfil: -41.446531673892822312  < (log(x) * y) <  130.700829182905140221
      * @return xˆy
      */
-    function pow(uint256 x, uint256 y) internal pure returns (uint256) {
+    function pow(uint256 x, uint256 y) public pure returns (uint256) {
         if (y == 0) {
             return uint256(DECIMALS);
         }
@@ -261,7 +261,7 @@ library LogExpMath {
      * @notice Must fulfil: -41.446531673892822312  < (log(x) * y) <  130.700829182905140221
      * @return log[base](arg)
      */
-    function log(int256 arg, int256 base) internal pure returns (int256) {
+    function log(int256 arg, int256 base) public pure returns (int256) {
         int256 logbase;
         if (PRECISION_LOG_UNDER_BOUND < base && base < PRECISION_LOG_UPPER_BOUND) {
             logbase = n_log_36(base);
@@ -282,7 +282,7 @@ library LogExpMath {
      * @param a Positive number with 18 decimal places.
      * @return ln(x)
      */
-    function n_log_36(int256 a) private pure returns (int256) {
+    function n_log_36(int256 a) public pure returns (int256) {
         a *= DECIMALS;
         int256 z = (DOUBLE_DECIMALS * (a - DOUBLE_DECIMALS)) / (a + DOUBLE_DECIMALS);
         int256 s = z;
