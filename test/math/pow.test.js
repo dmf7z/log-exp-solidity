@@ -11,7 +11,7 @@ const {
 const calculate = async (x, y) => {
   const instance = await LogExpMath.deployed();
   //Execute exp function
-  const solution = await instance.exp.call(to18Decimals(x), to18Decimals(y));
+  const solution = await instance.pow.call(to18Decimals(x), to18Decimals(y));
   //Calculate result with Decimal library
   const exact = Decimal(x).pow(y);
   return {
